@@ -16,7 +16,7 @@ FROM openjdk:18
 # Create app directory
 RUN mkdir /app
 
-# Copy the built JAR file from the builder stage
+# Copy the built JAR file from builder stage
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
 
 # Expose port 8080
