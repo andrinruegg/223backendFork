@@ -1,26 +1,26 @@
-# Use Gradle with JDK 18 for building
+# Nutze das Gradle-Build-Image mit JDK 18
 FROM gradle:jdk18 AS build
 
-# Set work directory
+# Setze das Arbeitsverzeichnis
 WORKDIR /home/gradle/src
 
-# Copy project files
-COPY --chown=gradle:gradle . /home/gradle/src
+# Kopiere das komplette Gradle-Projekt aus dem "Project"-Ordner
+COPY Project /home/gradle/src
 
-# Build the Spring Boot application
+# Erstelle die Spring Boot JAR-Datei
 RUN gradle --no-daemon bootJar
 
-# Use OpenJDK 18 for running the app
+# Wechsle zum Laufzeit-Image mit OpenJDK 18
 FROM openjdk:18
 
-# Create app directory
+# Erstelle ein Verzeichnis für die App
 RUN mkdir /app
 
-# Copy the built JAR file from builder stage
+# Kopiere die gebaute JAR-Datei ins Laufzeit-Image
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
 
-# Expose port 8080
+# Exponiere den Port 8080
 EXPOSE 8080
 
-# Run the Spring Boot application
+# Starte die Spring Boot Anwendung
 CMD ["java", "-jar", "-Xmx4g", "/app/spring-boot-application.jar"]
